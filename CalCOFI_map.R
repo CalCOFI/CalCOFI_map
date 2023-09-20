@@ -6,14 +6,11 @@ basemap <- get_stamenmap(bbox =c(left = -126.000, bottom = 29.000, right = -117.
 ggmap(basemap)
 
 #load data
-sites <- read.csv("Data/CalCOFI_stations_116.csv")
+sites <- read.csv("Data/calcofi_sta_master_v.1.2.csv")
 
 #add station points
 ggmap(basemap) + xlab("longitude") + ylab("latitutde") +
-  geom_point(data=sites, aes(x=Dlongitude, y=Dlatitude), 
-             shape = 16, color="black", size=1)
-
-
-
-
-
+  geom_point(data=sites, aes(x=lon, y=lat, color=leg), 
+             shape = 16, size=1.25)+
+  scale_color_manual(values=c("core" = "forestgreen", "north" = "darkred"))
+ggsave("draft_CalCOFI_map.jpg")

@@ -13,4 +13,5 @@ ggmap(basemap) + xlab("longitude") + ylab("latitutde") +
   geom_point(data=sites, aes(x=lon, y=lat, color=leg), 
              shape = 16, size=1.25)+
   scale_color_manual(values=c("core" = "forestgreen", "north" = "darkred"))
-ggsave("draft_CalCOFI_map.jpg")
+ggsave("draft_CalCOFI_map_9-20-23.jpg")
+

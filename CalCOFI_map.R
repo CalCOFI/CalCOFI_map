@@ -29,7 +29,7 @@ ggplot(data = world) +
              shape = 16)+
   scale_color_manual(values=c("Core stations" = "#1F40C7", 
                               "North stations" = "#ECCE15", 
-                              "Pilot stations" = "#7B7777" ))+
+                              "Pilot stations" = "#7B7777"))+
   geom_sf(data = boem, inherit.aes = F,
           color = "darkred", fill = NA) +
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+

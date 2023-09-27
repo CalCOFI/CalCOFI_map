@@ -4,6 +4,9 @@ library(dplyr)
 library(sf)
 library(rnaturalearth)
 library(rnaturalearthdata)
+library(remotes)
+library(calcofi4r)
+
 
 #set basemap
 world <- ne_countries(scale = "medium", returnclass = "sf")
@@ -37,7 +40,7 @@ ggplot(data = world) +
   theme(legend.title=element_blank())
 
 #save image
-ggsave("draft_CalCOFI_map_9-22-23_sm_pt.jpg")
+ggsave("draft_CalCOFI_map_9-27-23.jpg")
 
 
 

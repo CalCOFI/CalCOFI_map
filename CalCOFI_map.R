@@ -48,8 +48,7 @@ ggplot(data = world) +
   geom_sf(data = nms, inherit.aes = F,
           color = "orange", fill = NA) +
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+
-  theme_classic()+
-  theme(legend.title=element_blank())
+  theme_classic()
 
 #map with NOAA aquaculture opportunity areas
 

@@ -33,7 +33,7 @@ aqua <- cc_places |>
   filter(category == "NOAA Aquaculture Opportunity Areas")
 st_geometry(aqua) =  "gemoetr"
 
-#add station points to map + BOEM and NMS
+#add station points to map + BOEM and NMS + state waters
 ggplot(data = world) +
   xlab("longitute") +
   ylab("latitutde")+
@@ -47,6 +47,7 @@ ggplot(data = world) +
           color = "darkred", fill = NA) +
   geom_sf(data = nms, inherit.aes = F,
           color = "orange", fill = NA) +
+  geom_sf(data = st_water_4326, color = "green", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+
   theme_classic()
 
@@ -78,6 +79,13 @@ file.remove('Data/MPA_and_NMS.zip')
 
 MPA_NMS <- read_sf("Data/MPA_and_NMS.shp")
 
+#Add state waters (3 nautical miles) layer
+unzip('state_waters.zip', exdir = 'data')
+
+st_water <- read_sf("Data/sg211gq3741.shp")
+st_water_4326 <- st_water %>%
+  st_transform(crs = 4326)
+
 #Find station points in NMS boundaries
 pnts_nms <- sites %>% mutate(
   intersection = as.integer(st_intersects(geometry, nms))
@@ -85,3 +93,4 @@ pnts_nms <- sites %>% mutate(
 )
 
 pnts_nms
+

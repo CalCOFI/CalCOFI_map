@@ -82,7 +82,7 @@ MPA_NMS <- read_sf("Data/MPA_and_NMS.shp")
 #Add state waters (3 nautical miles) layer
 unzip('state_waters.zip', exdir = 'data')
 
-st_water <- read_sf("Data/sg211gq3741.shp")
+st_water <- read_sf("Data/CA_cst3nm.shp")
 st_water_4326 <- st_water %>%
   st_transform(crs = 4326)
 

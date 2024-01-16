@@ -73,11 +73,13 @@ ggplot(data = world) +
 ggsave("draft_CalCOFI_map_9-27-23.jpg")
 
 
-#Add MPA shapefile-in progress
+#Add MPA shapefile
 unzip('Data/MPA_and_NMS.zip', exdir = 'data')
 file.remove('Data/MPA_and_NMS.zip')
 
 MPA_NMS <- read_sf("Data/MPA_and_NMS.shp")
+MPA_NMS_4326 <- MPA_NMS %>% 
+  st_transform(crs=4326)
 
 #Add state waters (3 nautical miles) layer
 unzip('state_waters.zip', exdir = 'data')
@@ -85,6 +87,24 @@ unzip('state_waters.zip', exdir = 'data')
 st_water <- read_sf("Data/CA_cst3nm.shp")
 st_water_4326 <- st_water %>%
   st_transform(crs = 4326)
+
+#map with state waters, MPA, and NMS
+ggplot(data = world) +
+  xlab("longitute") +
+  ylab("latitutde")+
+  geom_sf()+
+  geom_point(data = sites, aes(x = lon, y = lat, color = Station), size = 0.75,
+             shape = 16)+
+  scale_color_manual(values=c("Core stations" = "#1F40C7", 
+                              "North stations" = "#ECCE15", 
+                              "Pilot stations" = "#7B7777"))+
+  geom_sf(data = st_water_4326,
+          color = "lightblue", fill = NA)+
+  geom_sf(data = MPA_NMS_4326,
+          color = "darkred", fill = NA)+
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+
+  theme_classic()+
+  theme(legend.title=element_blank())
 
 #Find station points in NMS boundaries
 pnts_nms <- sites %>% mutate(

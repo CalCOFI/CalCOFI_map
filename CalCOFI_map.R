@@ -33,6 +33,13 @@ aqua <- cc_places |>
   filter(category == "NOAA Aquaculture Opportunity Areas")
 st_geometry(aqua) =  "gemoetr"
 
+##Areas of special biological significance----
+unzip('Data/Areas_of_Special_Biological_Significance.zip')
+file.remove('Data/Areas_of_Special_Biological_Significance.zip')
+
+bio_sig <- read_sf('Data/Areas_of_Special_Biological_Significance.shp')
+
+
 #add station points to map + BOEM and NMS + state waters
 ggplot(data = world) +
   xlab("longitute") +
@@ -63,6 +70,22 @@ ggplot(data = world) +
                               "North stations" = "#ECCE15", 
                               "Pilot stations" = "#7B7777"))+
   geom_sf(data = aqua, inherit.aes = F,
+          color = "darkred", fill = NA)+
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+
+  theme_classic()+
+  theme(legend.title=element_blank())
+
+##Map of Special Biological Significance areas----
+ggplot(data = world) +
+  xlab("longitute") +
+  ylab("latitutde")+
+  geom_sf()+
+  geom_point(data = sites, aes(x = lon, y = lat, color = Station), size = 0.5,
+             shape = 16)+
+  scale_color_manual(values=c("Core stations" = "#1F40C7", 
+                              "North stations" = "#ECCE15", 
+                              "Pilot stations" = "#7B7777"))+
+  geom_sf(data = bio_sig, linewidth = 0.1,
           color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+
   theme_classic()+
@@ -106,7 +129,8 @@ ggplot(data = world) +
   theme_classic()+
   theme(legend.title=element_blank())
 
-#Find station points in NMS boundaries
+#Calculate the number of stations in an interest area----
+##Find station points in NMS boundaries----
 pnts_nms <- sites %>% mutate(
   intersection = as.integer(st_intersects(geometry, nms))
   , area = if_else(is.na(intersection), '', nms$name[intersection])
@@ -114,7 +138,7 @@ pnts_nms <- sites %>% mutate(
 
 pnts_nms
 
-#Find station points in MPA boundaries
+##Find station points in MPA boundaries----
 pnts_mpa <- sites %>% mutate(
   intersection = as.integer(st_intersects(geometry, MPA_4326)),
   area = if_else(is.na(intersection), '', MPA$NAME[intersection])

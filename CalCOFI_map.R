@@ -74,11 +74,11 @@ ggsave("draft_CalCOFI_map_9-27-23.jpg")
 
 
 #Add MPA shapefile
-unzip('Data/MPA_and_NMS.zip', exdir = 'data')
-file.remove('Data/MPA_and_NMS.zip')
+unzip('Data/California_Marine_Protected_Areas_[ds582].zip', exdir = 'data')
+file.remove('Data/California_Marine_Protected_Areas_[ds582].zip')
 
-MPA_NMS <- read_sf("Data/MPA_and_NMS.shp")
-MPA_NMS_4326 <- MPA_NMS %>% 
+MPA <- read_sf('Data/California_Marine_Protected_Areas_[ds582].shp')
+MPA_4326 <- MPA %>% 
   st_transform(crs=4326)
 
 #Add state waters (3 nautical miles) layer
@@ -88,19 +88,19 @@ st_water <- read_sf("Data/CA_cst3nm.shp")
 st_water_4326 <- st_water %>%
   st_transform(crs = 4326)
 
-#map with state waters, MPA, and NMS
+#map with state waters and MPA
 ggplot(data = world) +
   xlab("longitute") +
   ylab("latitutde")+
   geom_sf()+
-  geom_point(data = sites, aes(x = lon, y = lat, color = Station), size = 0.75,
+  geom_point(data = sites, aes(x = lon, y = lat, color = Station), size = 0.5,
              shape = 16)+
   scale_color_manual(values=c("Core stations" = "#1F40C7", 
                               "North stations" = "#ECCE15", 
                               "Pilot stations" = "#7B7777"))+
-  geom_sf(data = st_water_4326,
+  geom_sf(data = st_water_4326, linewidth = 0.1,
           color = "lightblue", fill = NA)+
-  geom_sf(data = MPA_NMS_4326,
+  geom_sf(data = MPA_4326, linewidth = 0.1,
           color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+
   theme_classic()+

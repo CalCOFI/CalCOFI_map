@@ -114,3 +114,10 @@ pnts_nms <- sites %>% mutate(
 
 pnts_nms
 
+#Find station points in MPA boundaries
+pnts_mpa <- sites %>% mutate(
+  intersection = as.integer(st_intersects(geometry, MPA_4326)),
+  area = if_else(is.na(intersection), '', MPA$NAME[intersection])
+)
+
+pnts_mpa

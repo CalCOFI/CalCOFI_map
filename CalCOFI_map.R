@@ -83,7 +83,20 @@ underwater <- read_sf('Data/Underwater_parks_and_marine_managed_areas.shp')
 underwater_4326 <- underwater %>% 
   st_transform(crs = 4326)
 
-#Maps----
+#Maps-----
+##map with stations----
+m <- ggplot(data = world) +
+  xlab("longitute") +
+  ylab("latitutde")+
+  geom_sf()+
+  geom_point(data = sites, aes(x = lon, y = lat, color = Station), size = 0.75,
+             shape = 16)+
+  scale_color_manual(values=c("Core stations" = "#1F40C7", 
+                              "North stations" = "#ECCE15", 
+                              "Pilot stations" = "#7B7777"))+
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+
+  theme_classic()
+
 ##add station points to map + BOEM and NMS + state waters----
 ggplot(data = world) +
   xlab("longitute") +
@@ -152,6 +165,26 @@ ggplot(data = world) +
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+
   theme_classic()+
   theme(legend.title=element_blank())
+
+##Map with CA NPDES outfalls----
+m + geom_sf(data = NPDES_outfalls, size = 0.5,
+            color = "darkred", fill = NA)+
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
+
+##Map with ocean outfalls----
+m + geom_sf(data = ocean_outfalls, size = 0.5,
+                color = "darkred", fill = NA)+
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
+
+##Map with POTW outfalls----
+m + geom_sf(data = POTW_outfalls, size = 0.5,
+            color = "darkred", fill = NA)+
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
+
+##Map with underwater parks and marine managed areas
+m + geom_sf(data = underwater_4326, linewidth = 0.1,
+            color = "darkred", fill = NA)+
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
 
 #Calculate the number of stations in an interest area----
 ##Find station points in NMS boundaries----

@@ -55,7 +55,7 @@ file.remove('Data/Areas_of_Special_Biological_Significance.zip')
 
 bio_sig <- read_sf('Data/Areas_of_Special_Biological_Significance.shp')
 
-##CA National Pollution Dishcard Ellimination Systen Major Outfalls----
+##CA National Pollution Discharge Elimination System Major Outfalls----
 unzip('Data/CA_NPDES_Major_outfalls.zip', exdir = 'Data')
 file.remove('Data/CA_NPDES_Major_outfalls.zip')
 
@@ -169,3 +169,9 @@ pnts_mpa <- sites %>% mutate(
 )
 
 pnts_mpa
+
+##find station points in boem wind areas----
+pnts_boem <- sites %>% mutate(
+  intersection = as.integer(st_intersects(geometry, boem)),
+  area = if_else(is.na(intersection), '', boem$name[intersection])
+)

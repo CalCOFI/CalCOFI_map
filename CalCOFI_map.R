@@ -208,3 +208,21 @@ pnts_boem <- sites %>% mutate(
   intersection = as.integer(st_intersects(geometry, boem)),
   area = if_else(is.na(intersection), '', boem$name[intersection])
 )
+
+##find station points in NOAA aquaculture opportunity areas----
+pnts_aqua <- sites %>% mutate(
+  intersection = as.integer(st_intersects(geometry, aqua)),
+  area = if_else(is.na(intersection), '', aqua$name[intersection])
+)
+
+##find station points in state waters----
+pnts_st_water <- sites %>% mutate(
+  intersection = as.integer(st_intersects(geometry, st_water_4326)),
+  area = if_else(is.na(intersection), '', st_water_4326$SOURCETHM[intersection])
+)
+
+##find station points in underwater parks/management areas----
+pnts_underwater <- sites %>% mutate(
+  intersection = as.integer(st_intersects(geometry, underwater_4326)),
+  area = if_else(is.na(intersection), '', underwater_4326$UNITNAME[intersection])
+)

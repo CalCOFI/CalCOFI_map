@@ -19,10 +19,14 @@ sites <- read.csv("Data/calcofi_sta_master_v.1.2.csv") |>
     crs = 4326)
 
 #Interest area layers----
+
 ##BOEM wind areas----
-boem <- cc_places |>
-  filter(category == "BOEM Wind Planning Areas")
-st_geometry(boem) = "geometry"
+unzip('Data/CA_Call_Area_Outline_2019_09_26.zip', exdir = 'Data')
+file.remove('Data/CA_Call_Area_Outline_2019_09_26.zip')
+
+boem <- read_sf('Data/CA_Call_Area_Outline_2018_09_26.shp')
+boem_4326 <- boem2 %>% 
+  st_transform(crs=4326)
 
 ##National Marine Sanctuaries area----
 nms <- cc_places |>
@@ -110,7 +114,7 @@ ggplot(data = world) +
   geom_sf(data = boem, inherit.aes = F,
           color = "darkred", fill = NA) +
   geom_sf(data = nms, inherit.aes = F,
-          color = "orange", fill = NA) +
+         color = "orange", fill = NA) +
   geom_sf(data = st_water_4326, color = "green", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+
   theme_classic()
@@ -226,3 +230,21 @@ pnts_underwater <- sites %>% mutate(
   intersection = as.integer(st_intersects(geometry, underwater_4326)),
   area = if_else(is.na(intersection), '', underwater_4326$UNITNAME[intersection])
 )
+
+##buffer around stations----
+sites_ft <- st_transform(sites, 2264) #change coordinate system to feet
+buffer <- st_buffer(sites_ft, 5280*10) #setting buffer of 10 miles
+
+###map visualizing the buffers
+m <- ggplot(data = world) +
+  xlab("longitute") +
+  ylab("latitutde")+
+  geom_sf()+
+  geom_sf(data = buffer, fill = NA, color = "red")+
+  geom_point(data = sites_ft, aes(x = lon, y = lat, color = Station), size = 0.2,
+             shape = 16)+
+  scale_color_manual(values=c("Core stations" = "#1F40C7", 
+                              "North stations" = "#ECCE15", 
+                              "Pilot stations" = "#7B7777"))+
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+
+  theme_classic()

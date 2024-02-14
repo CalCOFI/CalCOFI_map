@@ -111,11 +111,11 @@ ggplot(data = world) +
   scale_color_manual(values=c("Core stations" = "#1F40C7", 
                               "North stations" = "#ECCE15", 
                               "Pilot stations" = "#7B7777"))+
-  geom_sf(data = boem, inherit.aes = F,
+  geom_sf(data = boem_4326, inherit.aes = F,
           color = "darkred", fill = NA) +
-  geom_sf(data = nms, inherit.aes = F,
-         color = "orange", fill = NA) +
-  geom_sf(data = st_water_4326, color = "green", fill = NA)+
+  #geom_sf(data = nms, inherit.aes = F,
+         #color = "orange", fill = NA) +
+  #geom_sf(data = st_water_4326, color = "green", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+
   theme_classic()
 
@@ -209,8 +209,8 @@ pnts_mpa
 
 ##find station points in boem wind areas----
 pnts_boem <- sites %>% mutate(
-  intersection = as.integer(st_intersects(geometry, boem)),
-  area = if_else(is.na(intersection), '', boem$name[intersection])
+  intersection = as.integer(st_intersects(geometry, boem_4326)),
+  area = if_else(is.na(intersection), '', boem_4326$Area_Name[intersection])
 )
 
 ##find station points in NOAA aquaculture opportunity areas----

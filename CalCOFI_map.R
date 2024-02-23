@@ -231,16 +231,28 @@ pnts_underwater <- sites %>% mutate(
   area = if_else(is.na(intersection), '', underwater_4326$UNITNAME[intersection])
 )
 
-##buffer around stations----
+##buffers around stations----
 sites_ft <- st_transform(sites, 2264) #change coordinate system to feet
-buffer <- st_buffer(sites_ft, 5280*10) #setting buffer of 10 miles
+buffer1km <- st_buffer(sites_ft, 3280.84) #setting buffer of 1km
+buffer3km <- st_buffer(sites_ft, 9842.52)
+buffer5km <- st_buffer(sites_ft, 16404.2)
+
+##
+ocean_outfalls_2264 <- ocean_outfalls %>%
+  st_transform(crs = 2264)
+
+pnts_ocean_outfalls <- ocean_outfalls_2264 %>% mutate(
+  intersection = as.integer(st_intersects(geometry, buffer5km)),
+  area = if_else(is.na(intersection), "", buffer5km$Station[intersection])
+)
+
 
 ###map visualizing the buffers
 m <- ggplot(data = world) +
   xlab("longitute") +
   ylab("latitutde")+
   geom_sf()+
-  geom_sf(data = buffer, fill = NA, color = "red")+
+  geom_sf(data = buffer5km, fill = NA, color = "red")+
   geom_point(data = sites_ft, aes(x = lon, y = lat, color = Station), size = 0.2,
              shape = 16)+
   scale_color_manual(values=c("Core stations" = "#1F40C7", 

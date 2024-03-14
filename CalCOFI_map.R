@@ -237,14 +237,50 @@ buffer1km <- st_buffer(sites_ft, 3280.84) #setting buffer of 1km
 buffer3km <- st_buffer(sites_ft, 9842.52)
 buffer5km <- st_buffer(sites_ft, 16404.2)
 
-##
+##ocean outfalls near stations
 ocean_outfalls_2264 <- ocean_outfalls %>%
   st_transform(crs = 2264)
+
+pnts_ocean_outfalls <- ocean_outfalls_2264 %>% mutate(
+  intersection = as.integer(st_intersects(geometry, buffer1km)),
+  area = if_else(is.na(intersection), "", buffer1km$Station[intersection])
+)
+
+pnts_ocean_outfalls <- ocean_outfalls_2264 %>% mutate(
+  intersection = as.integer(st_intersects(geometry, buffer5km)),
+  area = if_else(is.na(intersection), "", buffer3km$Station[intersection])
+)
 
 pnts_ocean_outfalls <- ocean_outfalls_2264 %>% mutate(
   intersection = as.integer(st_intersects(geometry, buffer5km)),
   area = if_else(is.na(intersection), "", buffer5km$Station[intersection])
 )
+
+##NPDES near stations----
+NPDES_outfalls_2264 <- NPDES_outfalls_4326 %>% 
+  st_transform(crs = 2264)
+
+pnts_NPDES <- NPDES_outfalls_2264 %>% mutate(
+  intersection = as.integer(st_intersects(geometry, buffer5km)),
+  area = if_else(is.na(intersection), "", buffer5km$Station[intersection])
+)
+
+##POTW near stations----
+POTW_outfalls_2264 <- POTW_outfalls %>% 
+  st_transform(crs = 2264)
+
+pnts_POTW <- POTW_outfalls_2264 %>% mutate(
+  intersection = as.integer(st_intersects(geometry, buffer5km)),
+  area = if_else(is.na(intersection), "", buffer5km$Station[intersection])
+)
+
+MPA_2264 <- MPA_4326 %>% 
+  st_transform(crs = 2264)
+buffer_MPA <- MPA_2264 %>% mutate(
+  intersection = as.integer(st_intersects(geometry, buffer5km)),
+  area = if_else(is.na(intersection), "", buffer5km$Station[intersection])
+)
+
 
 
 ###map visualizing the buffers
@@ -253,6 +289,8 @@ m <- ggplot(data = world) +
   ylab("latitutde")+
   geom_sf()+
   geom_sf(data = buffer5km, fill = NA, color = "red")+
+  geom_sf(data = MPA_4326, linewidth = 0.1,
+          color = "darkred", fill = NA)+
   geom_point(data = sites_ft, aes(x = lon, y = lat, color = Station), size = 0.2,
              shape = 16)+
   scale_color_manual(values=c("Core stations" = "#1F40C7", 

@@ -19,6 +19,9 @@ sites <- read.csv("Data/calcofi_sta_master_v.1.2.csv") |>
     remove = F,
     crs = 4326)
 
+sites_no_pilot <- sites %>% 
+  filter(Station == "Core stations" | Station == "North stations")
+
 #Interest area layers----
 
 ##BOEM wind areas----
@@ -97,8 +100,8 @@ cowcod <- read_sf('Data/MAN_SCSR_Cowcod_ConsArea.shp')
 #Maps-----
 ##map with stations----
 m <- ggplot(data = world) +
-  xlab("longitute") +
-  ylab("latitutde")+
+  xlab("longitude") +
+  ylab("latitude")+
   geom_sf()+
   geom_point(data = sites, aes(x = lon, y = lat, color = Station), size = 0.75,
              shape = 16)+
@@ -109,10 +112,21 @@ m <- ggplot(data = world) +
   theme_classic()+
   annotation_scale()
 
+#no pilot stations
+p <- ggplot(data = world) +
+  xlab("longitude") +
+  ylab("latitude") +
+  geom_sf() +
+  geom_point(data = sites_no_pilot, aes(x = lon, y = lat), size = 0.75,
+             shape = 16, color = "#1F40C7")+
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+
+  theme_classic()+
+  annotation_scale()
+
 ##add station points to map + BOEM and NMS + state waters----
 ggplot(data = world) +
-  xlab("longitute") +
-  ylab("latitutde")+
+  xlab("longitude") +
+  ylab("latitude")+
   geom_sf()+
   geom_point(data = sites, aes(x = lon, y = lat, color = Station), size = 0.75,
              shape = 16)+
@@ -120,10 +134,14 @@ ggplot(data = world) +
                               "North stations" = "#ECCE15", 
                               "Pilot stations" = "#7B7777"))+
   geom_sf(data = boem_4326, inherit.aes = F,
-          color = "darkred", fill = NA) +
-  #geom_sf(data = nms, inherit.aes = F,
-         #color = "orange", fill = NA) +
-  #geom_sf(data = st_water_4326, color = "green", fill = NA)+
+          color = "#7E2954", fill = NA) +
+  geom_sf(data = nms, inherit.aes = F,
+         color = "#DCCD7D", fill = NA) +
+  geom_sf(data = st_water_4326, color = "#94CBEC", fill = NA) +
+  geom_sf(data = MPA_4326, color = "#337538", fill = NA) +
+  geom_sf(data = cowcod, color = "#2E2585", fill = NA) +
+  geom_sf(data = aqua, color = "#C26A77", fill = NA) +
+  geom_sf(data = underwater, color = "#5DA899", fill = NA) +
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+
   theme_classic()+
   annotation_scale()
@@ -131,8 +149,8 @@ ggplot(data = world) +
 ##map with NOAA aquaculture opportunity areas----
 
 ggplot(data = world) +
-  xlab("longitute") +
-  ylab("latitutde")+
+  xlab("longitude") +
+  ylab("latitude")+
   geom_sf()+
   geom_point(data = sites, aes(x = lon, y = lat, color = Station), size = 0.75,
              shape = 16)+
@@ -147,8 +165,8 @@ ggplot(data = world) +
 
 ##Map of Special Biological Significance areas----
 ggplot(data = world) +
-  xlab("longitute") +
-  ylab("latitutde")+
+  xlab("longitude") +
+  ylab("latitude")+
   geom_sf()+
   geom_point(data = sites, aes(x = lon, y = lat, color = Station), size = 0.5,
              shape = 16)+
@@ -163,8 +181,8 @@ ggplot(data = world) +
 
 ##map with state waters and MPA----
 ggplot(data = world) +
-  xlab("longitute") +
-  ylab("latitutde")+
+  xlab("longitude") +
+  ylab("latitude")+
   geom_sf()+
   geom_point(data = sites, aes(x = lon, y = lat, color = Station), size = 0.5,
              shape = 16)+

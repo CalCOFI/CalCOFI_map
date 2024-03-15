@@ -26,7 +26,7 @@ unzip('Data/CA_Call_Area_Outline_2019_09_26.zip', exdir = 'Data')
 file.remove('Data/CA_Call_Area_Outline_2019_09_26.zip')
 
 boem <- read_sf('Data/CA_Call_Area_Outline_2018_09_26.shp')
-boem_4326 <- boem2 %>% 
+boem_4326 <- boem %>% 
   st_transform(crs=4326)
 
 ##National Marine Sanctuaries area----
@@ -88,6 +88,12 @@ underwater <- read_sf('Data/Underwater_parks_and_marine_managed_areas.shp')
 underwater_4326 <- underwater %>% 
   st_transform(crs = 4326)
 
+##Cowcod conservation areas----
+unzip('Data/data_EPSG_4326.zip', exdir = 'Data')
+file.remove('Data/data_EPSG_4326.zip')
+
+cowcod <- read_sf('Data/MAN_SCSR_Cowcod_ConsArea.shp')
+
 #Maps-----
 ##map with stations----
 m <- ggplot(data = world) +
@@ -119,7 +125,8 @@ ggplot(data = world) +
          #color = "orange", fill = NA) +
   #geom_sf(data = st_water_4326, color = "green", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+
-  theme_classic()
+  theme_classic()+
+  annotation_scale()
 
 ##map with NOAA aquaculture opportunity areas----
 
@@ -192,6 +199,11 @@ m + geom_sf(data = underwater_4326, linewidth = 0.1,
             color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
 
+##Map with Cowcod conservation areas
+m + geom_sf(data = cowcod, linewidth = 0.1,
+            color = "darkred", fill = NA) +
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
+
 #Calculate the number of stations in an interest area----
 ##Find station points in NMS boundaries----
 pnts_nms <- sites %>% mutate(
@@ -232,6 +244,17 @@ pnts_underwater <- sites %>% mutate(
   intersection = as.integer(st_intersects(geometry, underwater_4326)),
   area = if_else(is.na(intersection), '', underwater_4326$UNITNAME[intersection])
 )
+
+##Cowcod conseration areas with calCOFI stations----
+
+sf::sf_use_s2(FALSE)
+cowcod$objectid <- as.character(cowcod$objectid)
+pnts_cowcod <- sites %>% mutate(
+  intersection = as.integer(st_intersects(geometry, cowcod)),
+  area = if_else(is.na(intersection), '', cowcod$objectid[intersection])
+)
+
+sf::sf_use_s2(TRUE)
 
 ##buffers around stations----
 sites_ft <- st_transform(sites, 2264) #change coordinate system to feet
@@ -285,7 +308,7 @@ buffer_MPA <- MPA_2264 %>% mutate(
 
 
 
-###map visualizing the buffers
+##map visualizing the buffers----
 m <- ggplot(data = world) +
   xlab("longitute") +
   ylab("latitutde")+

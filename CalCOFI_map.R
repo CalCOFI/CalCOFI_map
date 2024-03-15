@@ -6,6 +6,7 @@ library(rnaturalearth)
 library(rnaturalearthdata)
 library(remotes)
 library(calcofi4r)
+library(ggspatial)
 
 
 #set basemap----
@@ -99,7 +100,8 @@ m <- ggplot(data = world) +
                               "North stations" = "#ECCE15", 
                               "Pilot stations" = "#7B7777"))+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+
-  theme_classic()
+  theme_classic()+
+  annotation_scale()
 
 ##add station points to map + BOEM and NMS + state waters----
 ggplot(data = world) +

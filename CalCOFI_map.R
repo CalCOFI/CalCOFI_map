@@ -62,6 +62,8 @@ unzip('Data/Areas_of_Special_Biological_Significance.zip', exdir = 'Data')
 file.remove('Data/Areas_of_Special_Biological_Significance.zip')
 
 bio_sig <- read_sf('Data/Areas_of_Special_Biological_Significance.shp')
+bio_sig_4326 <- bio_sig %>% 
+  st_transform(crs = 4326)
 
 ##CA National Pollution Discharge Elimination System Major Outfalls----
 unzip('Data/CA_NPDES_Major_outfalls.zip', exdir = 'Data')
@@ -128,7 +130,7 @@ ggplot(data = world) +
   xlab("longitude") +
   ylab("latitude")+
   geom_sf()+
-  geom_point(data = sites, aes(x = lon, y = lat, color = Station), size = 0.75,
+  geom_point(data = sites_no_pilot, aes(x = lon, y = lat, color = Station), size = 0.75,
              shape = 16)+
   scale_color_manual(values=c("Core stations" = "#1F40C7", 
                               "North stations" = "#ECCE15", 
@@ -263,6 +265,14 @@ pnts_underwater <- sites %>% mutate(
   area = if_else(is.na(intersection), '', underwater_4326$UNITNAME[intersection])
 )
 
+##Biologically Significant areas with calCOFI stations----
+sf::sf_use_s2(FALSE)
+pnts_bio_sig_4326 <- sites %>% mutate(
+  intersection = as.integer(st_intersects(geometry, bio_sig_4326)),
+  area = if_else(is.na(intersection), '', bio_sig_4326$ASBS_Name[intersection])
+)
+
+sf::sf_use_s2(TRUE)
 ##Cowcod conseration areas with calCOFI stations----
 
 sf::sf_use_s2(FALSE)

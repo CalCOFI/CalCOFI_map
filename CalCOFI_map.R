@@ -42,7 +42,7 @@ aqua <- cc_places |>
   filter(category == "NOAA Aquaculture Opportunity Areas")
 st_geometry(aqua) =  "gemoetr"
 
-##Add MPA shapefile----
+##Marine Protected Aareas shapefile----
 unzip('Data/California_Marine_Protected_Areas_[ds582].zip', exdir = 'Data')
 file.remove('Data/California_Marine_Protected_Areas_[ds582].zip')
 
@@ -50,7 +50,7 @@ MPA <- read_sf('Data/California_Marine_Protected_Areas_[ds582].shp')
 MPA_4326 <- MPA %>% 
   st_transform(crs=4326)
 
-##Add state waters (3 nautical miles) layer----
+##State waters (3 nautical miles) layer----
 unzip('state_waters.zip', exdir = 'Data')
 
 st_water <- read_sf("Data/CA_cst3nm.shp")
@@ -100,7 +100,7 @@ file.remove('Data/data_EPSG_4326.zip')
 cowcod <- read_sf('Data/MAN_SCSR_Cowcod_ConsArea.shp')
 
 #Maps-----
-##map with stations----
+##CalCOFI stations base map----
 m <- ggplot(data = world) +
   xlab("longitude") +
   ylab("latitude")+
@@ -114,7 +114,7 @@ m <- ggplot(data = world) +
   theme_classic()+
   annotation_scale()
 
-##no pilot stations----
+##No pilot stations base map----
 p <- ggplot(data = world) +
   xlab("longitude") +
   ylab("latitude") +
@@ -125,7 +125,7 @@ p <- ggplot(data = world) +
   theme_classic()+
   annotation_scale()
 
-##map with most layers----
+##Most layers included map----
 ggplot(data = world) +
   xlab("longitude") +
   ylab("latitude")+
@@ -148,7 +148,7 @@ ggplot(data = world) +
   theme_classic()+
   annotation_scale()
 
-##map with NOAA aquaculture opportunity areas----
+##NOAA aquaculture opportunity areas map----
 
 ggplot(data = world) +
   xlab("longitude") +
@@ -169,7 +169,7 @@ p + geom_sf(data = aqua, size = 0.5,
          color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
 
-##Map of Special Biological Significance areas----
+##Areas of Special Biological Significance map----
 ggplot(data = world) +
   xlab("longitude") +
   ylab("latitude")+
@@ -190,7 +190,7 @@ p + geom_sf(data = bio_sig, size = 0.5,
             color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
 
-##map with state waters and MPA----
+##State + MPA map----
 ggplot(data = world) +
   xlab("longitude") +
   ylab("latitude")+
@@ -226,7 +226,7 @@ p + geom_sf(data = nms, size = 0.5,
             color = "darkred", fill = NA) +
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
 
-##Map with CA NPDES outfalls----
+##CA NPDES outfalls map----
 m + geom_sf(data = NPDES_outfalls_4326, size = 0.5,
             color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
@@ -235,7 +235,7 @@ p + geom_sf(data = NPDES_outfalls_4326, size = 0.5,
             color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
 
-##Map with ocean outfalls----
+##Ocean outfalls map----
 m + geom_sf(data = ocean_outfalls, size = 0.5,
                 color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
@@ -244,7 +244,7 @@ p + geom_sf(data = ocean_outfalls, size = 0.5,
             color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
 
-##Map with POTW outfalls----
+##POTW outfalls map----
 m + geom_sf(data = POTW_outfalls, size = 0.5,
             color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
@@ -253,7 +253,7 @@ p + geom_sf(data = POTW_outfalls, size = 0.5,
             color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
 
-##Map with underwater parks and marine managed areas
+##Underwater parks and marine managed areas map----
 m + geom_sf(data = underwater_4326, linewidth = 0.1,
             color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
@@ -262,7 +262,7 @@ p + geom_sf(data = underwater_4326, linewidth = 0.1,
            color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
 
-##Map with Cowcod conservation areas
+##Cowcod conservation areas map----
 m + geom_sf(data = cowcod, linewidth = 0.1,
             color = "darkred", fill = NA) +
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
@@ -271,8 +271,8 @@ p + geom_sf(data = cowcod, linewidth = 0.1,
               color = "darkred", fill = NA) +
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
 
-#Calculate the number of stations in an interest area----
-##Find station points in NMS boundaries----
+#Number of stations in an interest area----
+##NMS boundaries with calCOFI stations----
 pnts_nms <- sites %>% mutate(
   intersection = as.integer(st_intersects(geometry, nms))
   , area = if_else(is.na(intersection), '', nms$name[intersection])
@@ -280,7 +280,7 @@ pnts_nms <- sites %>% mutate(
 
 pnts_nms
 
-##Find station points in MPA boundaries----
+##MPA boundaries with calCOFI stations----
 pnts_mpa <- sites %>% mutate(
   intersection = as.integer(st_intersects(geometry, MPA_4326)),
   area = if_else(is.na(intersection), '', MPA$NAME[intersection])
@@ -288,31 +288,31 @@ pnts_mpa <- sites %>% mutate(
 
 pnts_mpa
 
-##find station points in boem wind areas----
+##BOEM wind areas with calCOFI stations----
 pnts_boem <- sites %>% mutate(
   intersection = as.integer(st_intersects(geometry, boem_4326)),
   area = if_else(is.na(intersection), '', boem_4326$Area_Name[intersection])
 )
 
-##find station points in NOAA aquaculture opportunity areas----
+##NOAA aquaculture opportunity areas with calCOFI stations----
 pnts_aqua <- sites %>% mutate(
   intersection = as.integer(st_intersects(geometry, aqua)),
   area = if_else(is.na(intersection), '', aqua$name[intersection])
 )
 
-##find station points in state waters----
+##State waters with calCOFI stations----
 pnts_st_water <- sites %>% mutate(
   intersection = as.integer(st_intersects(geometry, st_water_4326)),
   area = if_else(is.na(intersection), '', st_water_4326$SOURCETHM[intersection])
 )
 
-##find station points in underwater parks/management areas----
+##Underwater parks/management areas with calCOFI stations----
 pnts_underwater <- sites %>% mutate(
   intersection = as.integer(st_intersects(geometry, underwater_4326)),
   area = if_else(is.na(intersection), '', underwater_4326$UNITNAME[intersection])
 )
 
-##Biologically Significant areas with calCOFI stations----
+##Areas of Special Biological Significance areas with calCOFI stations----
 sf::sf_use_s2(FALSE)
 pnts_bio_sig_4326 <- sites %>% mutate(
   intersection = as.integer(st_intersects(geometry, bio_sig_4326)),

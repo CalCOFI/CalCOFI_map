@@ -320,8 +320,8 @@ pnts_bio_sig_4326 <- sites %>% mutate(
 )
 
 sf::sf_use_s2(TRUE)
-##Cowcod conseration areas with calCOFI stations----
 
+##Cowcod conseration areas with calCOFI stations----
 sf::sf_use_s2(FALSE)
 cowcod$objectid <- as.character(cowcod$objectid)
 pnts_cowcod <- sites %>% mutate(
@@ -356,7 +356,7 @@ pnts_ocean_outfalls <- ocean_outfalls_2264 %>% mutate(
   area = if_else(is.na(intersection), "", buffer5km$Station[intersection])
 )
 
-##NPDES near stations----
+##[NOT WORKING] NPDES near stations----
 NPDES_outfalls_2264 <- NPDES_outfalls_4326 %>% 
   st_transform(crs = 2264)
 
@@ -365,7 +365,7 @@ pnts_NPDES <- NPDES_outfalls_2264 %>% mutate(
   area = if_else(is.na(intersection), "", buffer5km$Station[intersection])
 )
 
-##POTW near stations----
+##[NOT WORKING] POTW near stations----
 POTW_outfalls_2264 <- POTW_outfalls %>% 
   st_transform(crs = 2264)
 
@@ -374,6 +374,7 @@ pnts_POTW <- POTW_outfalls_2264 %>% mutate(
   area = if_else(is.na(intersection), "", buffer5km$Station[intersection])
 )
 
+#NOT WORKING
 MPA_2264 <- MPA_4326 %>% 
   st_transform(crs = 2264)
 buffer_MPA <- MPA_2264 %>% mutate(

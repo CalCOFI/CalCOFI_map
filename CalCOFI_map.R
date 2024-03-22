@@ -114,7 +114,7 @@ m <- ggplot(data = world) +
   theme_classic()+
   annotation_scale()
 
-#no pilot stations
+##no pilot stations----
 p <- ggplot(data = world) +
   xlab("longitude") +
   ylab("latitude") +
@@ -125,7 +125,7 @@ p <- ggplot(data = world) +
   theme_classic()+
   annotation_scale()
 
-##add station points to map + BOEM and NMS + state waters----
+##map with most layers----
 ggplot(data = world) +
   xlab("longitude") +
   ylab("latitude")+
@@ -165,6 +165,10 @@ ggplot(data = world) +
   theme_classic()+
   theme(legend.title=element_blank())
 
+p + geom_sf(data = aqua, size = 0.5,
+         color = "darkred", fill = NA)+
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
+
 ##Map of Special Biological Significance areas----
 ggplot(data = world) +
   xlab("longitude") +
@@ -179,7 +183,12 @@ ggplot(data = world) +
           color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+
   theme_classic()+
-  theme(legend.title=element_blank())
+  theme(legend.title=element_blank())+
+  annotation_scale()
+
+p + geom_sf(data = bio_sig, size = 0.5,
+            color = "darkred", fill = NA)+
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
 
 ##map with state waters and MPA----
 ggplot(data = world) +
@@ -197,10 +206,32 @@ ggplot(data = world) +
           color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)+
   theme_classic()+
-  theme(legend.title=element_blank())
+  theme(legend.title=element_blank())+
+  annotation_scale()
+
+p + geom_sf(data = st_water_4326, size = 0.5,
+            color = "lightblue", fill = NA)+
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
+
+p + geom_sf(data = MPA_4326, size = 0.5,
+            color = "darkred", fill = NA)+
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
+
+##NMS map----
+m + geom_sf(data = nms, size = 0.5,
+            color = "darkred", fill = NA) +
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
+
+p + geom_sf(data = nms, size = 0.5,
+            color = "darkred", fill = NA) +
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
 
 ##Map with CA NPDES outfalls----
-m + geom_sf(data = NPDES_outfalls, size = 0.5,
+m + geom_sf(data = NPDES_outfalls_4326, size = 0.5,
+            color = "darkred", fill = NA)+
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
+
+p + geom_sf(data = NPDES_outfalls_4326, size = 0.5,
             color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
 
@@ -209,8 +240,16 @@ m + geom_sf(data = ocean_outfalls, size = 0.5,
                 color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
 
+p + geom_sf(data = ocean_outfalls, size = 0.5,
+            color = "darkred", fill = NA)+
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
+
 ##Map with POTW outfalls----
 m + geom_sf(data = POTW_outfalls, size = 0.5,
+            color = "darkred", fill = NA)+
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
+
+p + geom_sf(data = POTW_outfalls, size = 0.5,
             color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
 
@@ -219,9 +258,17 @@ m + geom_sf(data = underwater_4326, linewidth = 0.1,
             color = "darkred", fill = NA)+
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
 
+p + geom_sf(data = underwater_4326, linewidth = 0.1,
+           color = "darkred", fill = NA)+
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
+
 ##Map with Cowcod conservation areas
 m + geom_sf(data = cowcod, linewidth = 0.1,
             color = "darkred", fill = NA) +
+  coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
+
+p + geom_sf(data = cowcod, linewidth = 0.1,
+              color = "darkred", fill = NA) +
   coord_sf(xlim = c(-127, -117), ylim = c(29, 39.5), expand = FALSE)
 
 #Calculate the number of stations in an interest area----
